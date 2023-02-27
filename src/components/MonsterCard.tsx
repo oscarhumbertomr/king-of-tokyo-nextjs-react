@@ -1,6 +1,6 @@
 import styles from '@/styles/MonsterCard.module.css'
 import { Spacer, Col, Card, Text, Button, Row } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type propsMonsterCard = {
     index: number,
@@ -34,8 +34,20 @@ const MonsterCard = (props: propsMonsterCard) => {
             handleSetLife(index, 0)
             return
         }
-        handleSetLife(index, newLife)
+        handleSetLife(index, newLife >= 12 ? 12 : newLife)
     }
+
+    useEffect(()=>{
+        console.log(life)
+        console.log('life')
+        if(life<=0){
+            console.log('death')
+            setAlive(false)
+            return 
+        }
+        
+    },[life])
+
     const setVictoryPoints = (newVictoryPoints: number) => () => {
         if (newVictoryPoints < 0) {
             return
@@ -66,11 +78,11 @@ const MonsterCard = (props: propsMonsterCard) => {
 
     return (
         <>
-            <Col>
+            <Row >
                 <Card css={{ mw: "450px" }}>
                     <Card.Header>
                         <Row justify="space-between">
-                            <Text b>Monter: {name}</Text>
+                            <Text b>Monster: {name}</Text>
                             {isOnTokyo && <Text b>(On Tokyo)</Text>}
                         </Row>
 
@@ -120,7 +132,7 @@ const MonsterCard = (props: propsMonsterCard) => {
                     <Card.Footer>
                         <Row justify="space-between">
                             <>
-                                <Button size="sm" color='warning' onPress={()=>handleAtack(index, isOnTokyo)}>
+                                <Button size="sm" color='warning' disabled={isDeadOrWinner()} onPress={()=>handleAtack(index, isOnTokyo)}>
                             Atack
                         </Button>
                                 {buttonLeaveEnterTokyo}
@@ -128,7 +140,7 @@ const MonsterCard = (props: propsMonsterCard) => {
                         </Row>
                     </Card.Footer>
                 </Card>
-            </Col>
+            </Row>
             <Spacer y={2} />
         </>
     )
