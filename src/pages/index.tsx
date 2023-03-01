@@ -50,6 +50,7 @@ const Home: NextPage = () => {
 
 
             setPlayers(newPlayers)
+            setLastAtackMonsterIndex(-1)
         }
     }
 
@@ -173,6 +174,7 @@ const Home: NextPage = () => {
                         isOnTokyo={player.isOnTokyo}
                         handleOnTokyo={handleOnTokyo}
                         disableEnterOnTokyo={disableEnterOnTokyo}
+                        disableLeaveTokyo={lastAtackMonsterIndex<0}
                         handleSetVictoryPoints={handleSetVictoryPoints}
                         handleAtack={handleAtack}
                         handleSetLife={handleSetLife} />

@@ -25,7 +25,7 @@ const MonsterCard = (props: propsSelectMonster) => {
     const [visible, setVisible] = useState(false);
     const handler = () => setVisible(true);
     
-    const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+    const [selectedPlayers, setSelectedPlayers] = useState<any>([]);
 
     const closeHandler = () => {
         setVisible(false);
@@ -33,7 +33,7 @@ const MonsterCard = (props: propsSelectMonster) => {
 
     const addNewPlayer = () => {
   
-        const newPlayers = Array.from(selectedPlayers).map((player, index)=>{ return {
+        const newPlayers = Array.from<string>(selectedPlayers).map((player, index)=>{ return {
             name: player,
             isOnTokyo: false,
             life: 10,

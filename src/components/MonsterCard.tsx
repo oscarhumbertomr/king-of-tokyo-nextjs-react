@@ -7,6 +7,7 @@ type propsMonsterCard = {
     name: string,
     isOnTokyo: boolean,
     disableEnterOnTokyo: boolean,
+    disableLeaveTokyo: boolean,
     life: number,
     victoryPoints: number,
     handleOnTokyo: (index: number, status: boolean) => void,
@@ -25,7 +26,8 @@ const MonsterCard = (props: propsMonsterCard) => {
         handleSetLife,
         handleAtack,
         handleSetVictoryPoints,
-        disableEnterOnTokyo
+        disableEnterOnTokyo,
+        disableLeaveTokyo
     } = props
     const [alive, setAlive] = useState(true)
     const [winner, setWinner] = useState(false)
@@ -71,13 +73,15 @@ const MonsterCard = (props: propsMonsterCard) => {
 
     let buttonLeaveEnterTokyo: JSX.Element;
     if (isOnTokyo) {
-        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner() } onPress={() => handleOnTokyo(index, false)}>
+        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner() || disableLeaveTokyo } onPress={() => handleOnTokyo(index, false)}>
             Leave Tokyo
         </Button>
     } else if(!disableEnterOnTokyo) {
         buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={() => handleOnTokyo(index, true)}>
             Enter to Tokyo
         </Button>
+    } else {
+        buttonLeaveEnterTokyo = <div></div>
     }
 
 
