@@ -6,9 +6,10 @@ type propsMonsterCard = {
     index: number,
     name: string,
     isOnTokyo: boolean,
+    disableEnterOnTokyo: boolean,
     life: number,
     victoryPoints: number,
-    handleOnTokyio: (index: number, status: boolean) => void,
+    handleOnTokyo: (index: number, status: boolean) => void,
     handleSetLife: (index: number, life: number) => void,
     handleAtack: (index: number, isOnTokyo: boolean)=> void,
     handleSetVictoryPoints: (index: number, victoryPoints: number) => void,
@@ -20,10 +21,11 @@ const MonsterCard = (props: propsMonsterCard) => {
         isOnTokyo,
         life,
         victoryPoints,
-        handleOnTokyio,
+        handleOnTokyo,
         handleSetLife,
         handleAtack,
-        handleSetVictoryPoints
+        handleSetVictoryPoints,
+        disableEnterOnTokyo
     } = props
     const [alive, setAlive] = useState(true)
     const [winner, setWinner] = useState(false)
@@ -38,8 +40,6 @@ const MonsterCard = (props: propsMonsterCard) => {
     }
 
     useEffect(()=>{
-        console.log(life)
-        console.log('life')
         if(life<=0){
             console.log('death')
             setAlive(false)
@@ -63,14 +63,20 @@ const MonsterCard = (props: propsMonsterCard) => {
         return !alive || winner
     }
 
+    useEffect(()=>{
+        if(!alive){
+            handleOnTokyo(index, false)
+        }
+    },[alive])
+
     let buttonLeaveEnterTokyo: JSX.Element;
     if (isOnTokyo) {
-        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={() => handleOnTokyio(index, false)}>
-            Leave Tokyio
+        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner() } onPress={() => handleOnTokyo(index, false)}>
+            Leave Tokyo
         </Button>
-    } else {
-        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={() => handleOnTokyio(index, true)}>
-            Enter to Tokyio
+    } else if(!disableEnterOnTokyo) {
+        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={() => handleOnTokyo(index, true)}>
+            Enter to Tokyo
         </Button>
     }
 
@@ -78,8 +84,8 @@ const MonsterCard = (props: propsMonsterCard) => {
 
     return (
         <>
-            <Row >
-                <Card css={{ mw: "450px" }}>
+            <div className='my-4'>
+                <Card css={{ mw: "420px" }}>
                     <Card.Header>
                         <Row justify="space-between">
                             <Text b>Monster: {name}</Text>
@@ -89,25 +95,6 @@ const MonsterCard = (props: propsMonsterCard) => {
                     </Card.Header>
                     <Card.Divider />
                     <Card.Body>
-                        <Row>
-                            <Text>Life:</Text>
-                        </Row>
-                        <Row >
-                            <Col>
-                                <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={setLife(life - 1)}>
-                                    -
-                                </Button>
-                            </Col>
-                            <Col>
-                                <Text className={styles.text_center}>{life}</Text>
-                            </Col>
-                            <Col>
-                                <Button size="sm" color="secondary" disabled={isOnTokyo || isDeadOrWinner()} onPress={setLife(life + 1)} >
-                                    +
-                                </Button>
-                            </Col>
-                        </Row>
-                        <Spacer y={1} />
                         <Row >
                             <Text>Victory Points:</Text>
                         </Row>
@@ -126,6 +113,25 @@ const MonsterCard = (props: propsMonsterCard) => {
                                 </Button>
                             </Col>
                         </Row>
+                        <Spacer y={1} />
+                        <Row>
+                            <Text>Life:</Text>
+                        </Row>
+                        <Row >
+                            <Col>
+                                <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={setLife(life - 1)}>
+                                    -
+                                </Button>
+                            </Col>
+                            <Col>
+                                <Text className={styles.text_center}>{life}</Text>
+                            </Col>
+                            <Col>
+                                <Button size="sm" color="secondary" disabled={isOnTokyo || isDeadOrWinner()} onPress={setLife(life + 1)} >
+                                    +
+                                </Button>
+                            </Col>
+                        </Row>
 
                     </Card.Body>
                     <Card.Divider />
@@ -140,7 +146,7 @@ const MonsterCard = (props: propsMonsterCard) => {
                         </Row>
                     </Card.Footer>
                 </Card>
-            </Row>
+            </div>
             <Spacer y={2} />
         </>
     )

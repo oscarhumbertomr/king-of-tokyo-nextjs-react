@@ -3,65 +3,89 @@ import { Modal, Input, Container, Checkbox, Row, Button, Text, Dropdown } from "
 import { NextPage } from "next"
 import { useEffect, useState, useMemo } from "react";
 import MonsterCard from '@/components/MonsterCard';
+import SelectMonster from '@/components/SelectMonster';
 
-type PlayersType = {
+type PlayerType = {
     name: string,
     isOnTokyo: boolean,
     life: number,
-    victoryPoints: number
+    victoryPoints: number,
+    index: number
 }
 
-const allMonsters = ['Alienoid', 'Baby Gigazaur', 'Boogie Woogie', 'Cyber Bunny', 'Cyber Kitty', 'Gigazaur', 'The King', 'Meca Dragon', 'Pandakaï', 'Pumpkin Jack', 'Space Penguin']
-
-const testPlayers = [
-    {
-        name: allMonsters[0],
-        isOnTokyo: false,
-        life: 10,
-        victoryPoints: 0
-    },
-    {
-        name: allMonsters[1],
-        isOnTokyo: false,
-        life: 10,
-        victoryPoints: 0
-    },
-    {
-        name: allMonsters[2],
-        isOnTokyo: false,
-        life: 10,
-        victoryPoints: 0
-    },
-]
+// deshabilitar los botones de entrar a Tokyo despues de que ya este el maximo en Tokyo
 
 const Home: NextPage = () => {
-    const [players, setPlayers] = useState<PlayersType[]>([])
-    const [visible, setVisible] = useState(false);
-    const handler = () => setVisible(true);
-    const closeHandler = () => {
-        setVisible(false);
-        console.log("closed");
-    };
+    const [players, setPlayers] = useState<PlayerType[]>([])
+    const [lastAtackMonsterIndex, setLastAtackMonsterIndex] = useState(-1)
 
-    const handleOnTokyo = (index: number, status: boolean) => {
-        const newPlayers = players.map(player => {
-            return { ...player, isOnTokyo: false }
-        })
+    const leaveTokyo = (indexPlayer: number, status: boolean) => {
+        if (!status && lastAtackMonsterIndex >= 0) {
+            let newPlayers: PlayerType[] = []
+            if (monsterAlive > 4) {
+                newPlayers = players.map((player, index) =>
+                    indexPlayer === index
+                        ? {
+                            ...player,
+                            isOnTokyo: false,
+                        }
+                        : { ...player }
+                )
+                newPlayers[lastAtackMonsterIndex].isOnTokyo = true
+            } else {
+                newPlayers = players.map((player, index) => {
+                    if (indexPlayer === index) {
+                        return {
+                            ...player,
+                            isOnTokyo: false,
+                        }
+                    } else if (lastAtackMonsterIndex === index && monstersOnTokyo.length === 1) {
+                        return {
+                            ...player,
+                            isOnTokyo: true,
+                        }
+                    }
+                    return player
+                }
+                )
+            }
 
-        newPlayers[index].isOnTokyo = status
-        setPlayers(newPlayers)
+
+            setPlayers(newPlayers)
+        }
     }
 
-    const addNewPlayer = () => {
-  
-        const newPlayers = Array.from(selected).map(player=>{ return {
-            name: player,
-            isOnTokyo: false,
-            life: 10,
-            victoryPoints: 0
-        } })
-        setPlayers(players.concat(newPlayers))
-        closeHandler()
+    const enterToTokio = (indexPlayer: number, status: boolean) => {
+        if (status) {
+            let newPlayers: PlayerType[] = []
+            if (monsterAlive > 4 && monstersOnTokyo.length < 2) {
+                newPlayers = players.map((player, index) =>
+                    indexPlayer === index
+                        ? {
+                            ...player,
+                            isOnTokyo: true,
+                        }
+                        : { ...player }
+                )
+            } else {
+                newPlayers = players.map(player => {
+                    return { ...player, isOnTokyo: false }
+                })
+                newPlayers[indexPlayer].isOnTokyo = status
+            }
+
+
+            setPlayers(newPlayers)
+        }
+    }
+
+
+
+    const handleOnTokyo = (indexPlayer: number, status: boolean) => {
+
+        leaveTokyo(indexPlayer, status);
+        enterToTokio(indexPlayer, status);
+
     }
 
     const handleSetLife = (index: number, newLife: number) => {
@@ -89,8 +113,8 @@ const Home: NextPage = () => {
                 : { ...player }
         }
         )
-
         setPlayers(newplayers)
+        setLastAtackMonsterIndex(index)
 
     }
 
@@ -108,19 +132,40 @@ const Home: NextPage = () => {
         setPlayers(newPlayers)
     }
 
-    const [selected, setSelected] = useState([allMonsters[0]]);
 
-    const selectedValue = useMemo(
-        () => Array.from(selected).join(", ").replaceAll("_", " "),
-        [selected]
+
+    const monsterAlive = useMemo(
+        () => players.filter(player => player.life > 0).length,
+        [players]
     );
+
+    const monstersOnTokyo = useMemo(
+        () => players.filter(player => player.isOnTokyo),
+        [players]
+    );
+
+    const monstersNotOnTokyo = useMemo(
+        () => players.filter(player => !player.isOnTokyo),
+        [players]
+    );
+    const disableEnterOnTokyo = useMemo(
+        () => monsterAlive > 4 ? monstersOnTokyo.length > 1 : monstersOnTokyo.length > 0 ,
+        [players]
+    );
+
+    const handleSetPlayers = (newPlayers: PlayerType[]) => {
+        setPlayers(newPlayers)
+    }
 
     return (
         <Container alignItems='center' >
             <>
-                <Button onPress={handler}>Add</Button>
-
-                {players && players.map((player, index) =>
+                <h1 className="text-3xl font-bold">
+                    King of Tokyo Dashboard
+                </h1>
+                <SelectMonster handleSetPlayers={handleSetPlayers} />
+                <div className="flex flex-wrap">
+                    {players && players.map((player, index) =>
                     <MonsterCard
                         key={index}
                         name={player.name}
@@ -128,59 +173,16 @@ const Home: NextPage = () => {
                         victoryPoints={player.victoryPoints}
                         index={index}
                         isOnTokyo={player.isOnTokyo}
-                        handleOnTokyio={handleOnTokyo}
+                        handleOnTokyo={handleOnTokyo}
+                        disableEnterOnTokyo={disableEnterOnTokyo}
                         handleSetVictoryPoints={handleSetVictoryPoints}
                         handleAtack={handleAtack}
                         handleSetLife={handleSetLife} />
                 )}
+                </div>
+                
 
-                <Modal
-                    closeButton
-                    blur
-                    aria-labelledby="modal-title"
-                    open={visible}
-                    onClose={closeHandler}
-                >
-                    <Modal.Header>
-                        <Text id="modal-title" size={18}>
-                            {selected}
-                        </Text>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Dropdown>
-                            <Dropdown.Button flat color="secondary" css={{ tt: "capitalize" }}>
-                                {selectedValue}
-                            </Dropdown.Button>
-                            <Dropdown.Menu
-                                aria-label="Multiple selection actions"
-                                color="secondary"
-                                disallowEmptySelection
-                                selectionMode="multiple"
-                                selectedKeys={selected}
-                                onSelectionChange={setSelected}
-                            >
-                                {allMonsters.map(monster=>
-                                    <Dropdown.Item key={monster}>{monster}</Dropdown.Item>
-                                )}
-                                
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        <Row justify="space-between">
-                            <Checkbox>
-                                <Text size={14}>Remember me</Text>
-                            </Checkbox>
-                            <Text size={14}>Forgot password?</Text>
-                        </Row>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button auto flat color="error" onPress={closeHandler}>
-                            Cancel
-                        </Button>
-                        <Button auto onPress={addNewPlayer}>
-                            Add
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+
             </>
         </Container>
     )
