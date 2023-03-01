@@ -13,8 +13,6 @@ type PlayerType = {
     index: number
 }
 
-// deshabilitar los botones de entrar a Tokyo despues de que ya este el maximo en Tokyo
-
 const Home: NextPage = () => {
     const [players, setPlayers] = useState<PlayerType[]>([])
     const [lastAtackMonsterIndex, setLastAtackMonsterIndex] = useState(-1)
