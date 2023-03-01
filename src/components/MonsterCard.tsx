@@ -8,6 +8,7 @@ type propsMonsterCard = {
     isOnTokyo: boolean,
     disableEnterOnTokyo: boolean,
     disableLeaveTokyo: boolean,
+    disableAtack: boolean,
     life: number,
     victoryPoints: number,
     handleOnTokyo: (index: number, status: boolean) => void,
@@ -27,6 +28,7 @@ const MonsterCard = (props: propsMonsterCard) => {
         handleAtack,
         handleSetVictoryPoints,
         disableEnterOnTokyo,
+        disableAtack,
         disableLeaveTokyo
     } = props
     const [alive, setAlive] = useState(true)
@@ -142,7 +144,7 @@ const MonsterCard = (props: propsMonsterCard) => {
                     <Card.Footer>
                         <Row justify="space-between">
                             <>
-                                <Button size="sm" color='warning' disabled={isDeadOrWinner()} onPress={()=>handleAtack(index, isOnTokyo)}>
+                                <Button size="sm" color='warning' disabled={isDeadOrWinner() || disableAtack} onPress={()=>handleAtack(index, isOnTokyo)}>
                             Atack
                         </Button>
                                 {buttonLeaveEnterTokyo}

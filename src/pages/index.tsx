@@ -174,6 +174,7 @@ const Home: NextPage = () => {
                         isOnTokyo={player.isOnTokyo}
                         handleOnTokyo={handleOnTokyo}
                         disableEnterOnTokyo={disableEnterOnTokyo}
+                        disableAtack={monsterAlive > 4 ?  monstersOnTokyo.length < 2 : monstersOnTokyo.length == 0}
                         disableLeaveTokyo={lastAtackMonsterIndex<0}
                         handleSetVictoryPoints={handleSetVictoryPoints}
                         handleAtack={handleAtack}
