@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Your test should be working before any commit..."
+
+{
+    npm run lint
+    npm test
+} || {
+    echo "You can do it better"
+    echo "If this is super important and tests doesn't matter you can use"
+    echo "'git commit -m \"Please let me make my commit!\" --no-verify'"
+    echo "Use it wisely"
+    exit 1
+}
