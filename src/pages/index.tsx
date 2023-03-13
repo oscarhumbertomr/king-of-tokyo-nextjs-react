@@ -149,7 +149,7 @@ const Home: NextPage = () => {
     );
     const disableEnterOnTokyo = useMemo(
         () => monsterAlive > 4 ? monstersOnTokyo.length > 1 : monstersOnTokyo.length > 0 ,
-        [players]
+        [monsterAlive, monstersOnTokyo]
     );
 
     const handleSetPlayers = (newPlayers: PlayerType[]) => {
