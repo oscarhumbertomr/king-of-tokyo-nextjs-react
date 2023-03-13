@@ -2,6 +2,9 @@
   "root": true,
   "extends": ["next/core-web-vitals"],
   "plugins": ["testing-library"],
+  "rules": {
+    "react-hooks/exhaustive-deps": "error"
+  },
   "overrides": [
     // Only uses Testing Library lint rules in test files
     {
@@ -9,7 +12,12 @@
         "**/__tests__/**/*.[jt]s?(x)",
         "**/?(*.)+(spec|test).[jt]s?(x)"
       ],
-      "extends": ["plugin:testing-library/react"]
+      "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:testing-library/react"
+    ]
     }
   ]
 }
