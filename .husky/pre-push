@@ -6,7 +6,7 @@
 #   
 #   This will be triggered by the package `husky` and by the circle-ci pipeline via npm.
 #   Also this considers an extra mechanism to avoid this verification on extraordinary cases.
-#
+#   don't forget to run chmod ug+x .husky/*  
 
 CI_ENV=${CI_ENV:-}
 MAIN_VALIDATION=${MAIN_VALIDATION:-"true"}
