@@ -1,0 +1,37 @@
+#!/bin/sh
+#=====================
+#   This vefifies if the current branch (HEAD in tag cases) is behind a reference 
+#   branch, this to avoid loss of code that is already on main (on deploys
+#   for resource updates control.
+#   
+#   This will be triggered by the package `husky` and by the circle-ci pipeline via npm.
+#   Also this considers an extra mechanism to avoid this verification on extraordinary cases.
+#
+
+CI_ENV=${CI_ENV:-}
+MAIN_VALIDATION=${MAIN_VALIDATION:-"true"}
+
+if [ $MAIN_VALIDATION != "true" ]; then echo "Skypping validation"; exit 0; fi
+
+if [ -z $CI_ENV ]; then
+    echo "Pre-Commit Husky"
+    . "$(dirname "$0")/_/husky.sh"
+else
+    echo "Standalone verification"
+fi
+
+target_branch="origin/main"
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+echo "Verifiying ${current_branch} is up to date with ${target_branch}"
+commits_behind=$(git rev-list --left-right --count  $target_branch...$current_branch | cut -f1)
+
+if [ $commits_behind -gt 0 ]; then
+    echo "Your current branch/tag is '${target_branch}' by ${commits_behind} commits"
+    echo "  (use \"git pull\" to update your local branch)"
+    echo "If you need to push this changes without pull from main first you can do"
+    echo "'git push --no-verify' there will be a record of this action �"
+    exit 1;
+fi
+
+echo "Verification passed!"
