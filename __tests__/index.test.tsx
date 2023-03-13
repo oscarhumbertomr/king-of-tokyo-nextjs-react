@@ -9,7 +9,7 @@ describe('Home', () => {
     //   name: /King of Tokyo Dashboard\.js!/i,
     // })
 
-    const header = screen.queryAllByText('King of Tokyo Dashboard')
+    const header = screen.queryAllByText('King of Tokyo Dashboard s')
 
     expect(header).toBeTruthy()
   })
