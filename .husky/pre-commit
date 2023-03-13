@@ -5,7 +5,7 @@ echo "Your test should be working before any commit..."
 
 {
     npm run lint
-    npm test:ci
+    npm run test:ci
 } || {
     echo "You can do it better"
     echo "If this is super important and tests doesn't matter you can use"
