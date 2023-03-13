@@ -4,7 +4,7 @@
 echo "Your test should be working before any commit..."
 
 {
-    npm run lint
+    npx lint-staged
     npm run test:ci
 } || {
     echo "You can do it better"

@@ -71,7 +71,7 @@ const MonsterCard = (props: propsMonsterCard) => {
         if(!alive){
             handleOnTokyo(index, false)
         }
-    },[alive, handleOnTokyo])
+    },[alive, handleOnTokyo, index])
 
     let buttonLeaveEnterTokyo: JSX.Element;
     if (isOnTokyo) {
