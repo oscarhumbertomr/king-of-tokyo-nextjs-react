@@ -79,6 +79,7 @@ const MonsterCard = (props: PropsSelectMonster) => {
                     open={visible}
                     onClose={closeHandler}
                 >
+
                     <Modal.Header>
                         <Text id="modal-title" size={18}>
                             Select Monsters {disableMonstersToSelect}
