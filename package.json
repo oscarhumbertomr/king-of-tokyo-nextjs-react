@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --watch --coverage",
-    "test:ci": "jest --ci --coverage --coverageDirectory=./coverage/unit --ci --watchAll=false",
+    "test:ci": "jest --ci --coverage --coverageDirectory=./coverage/unit",
     "prepare": "husky install"
   },
   "dependencies": {
