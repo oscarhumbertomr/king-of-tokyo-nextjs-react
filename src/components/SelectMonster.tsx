@@ -1,74 +1,75 @@
-import { Modal, Dropdown, Checkbox, Text, Button, Row } from "@nextui-org/react";
-import { useEffect, useState, useMemo } from "react";
+import {
+  Modal, Dropdown, Text, Button,
+} from '@nextui-org/react';
+import { useState, useMemo } from 'react';
 
-type propsSelectMonster = {
-    handleSetPlayers: (newPlayers: PlayersType[])=> void
-}
+type PropsSelectMonster = {
+  handleSetPlayers: (newPlayers: PlayersType[])=> void
+};
 
 type PlayersType = {
-    name: string,
-    isOnTokyo: boolean,
-    life: number,
-    victoryPoints: number,
-    index: number
-}
+  name: string,
+  isOnTokyo: boolean,
+  life: number,
+  victoryPoints: number,
+  index: number
+};
 
-const allMonsters = ['Alienoid', 'Baby Gigazaur', 'Boogie Woogie', 'Cyber Bunny', 'Cyber Kitty', 'Gigazaur', 'The King', 'Meca Dragon', 'Pandakaï', 'Pumpkin Jack', 'Space Penguin']
+const allMonsters = ['Alienoid', 'Baby Gigazaur', 'Boogie Woogie', 'Cyber Bunny', 'Cyber Kitty', 'Gigazaur', 'The King', 'Meca Dragon', 'Pandakaï', 'Pumpkin Jack', 'Space Penguin'];
 
+const MonsterCard = (props: PropsSelectMonster) => {
+  const {
+    handleSetPlayers,
+  } = props;
 
-const MonsterCard = (props: propsSelectMonster) => {
-    const { 
-        handleSetPlayers
-    } = props
-    
-    
-    const [visible, setVisible] = useState(false);
-    const handler = () => setVisible(true);
-    
-    const [selectedPlayers, setSelectedPlayers] = useState<any>([]);
+  const [visible, setVisible] = useState(false);
+  const handler = () => setVisible(true);
 
-    const closeHandler = () => {
-        setVisible(false);
-    };
+  const [selectedPlayers, setSelectedPlayers] = useState<any>([]);
 
-    const addNewPlayer = () => {
-  
-        const newPlayers = Array.from<string>(selectedPlayers).map((player, index)=>{ return {
-            name: player,
-            isOnTokyo: false,
-            life: 10,
-            victoryPoints: 0,
-            index
-        } })
-        handleSetPlayers(newPlayers)
-        // handleSetPlayers(players.concat(newPlayers))
-        closeHandler()
-    }
+  const closeHandler = () => {
+    setVisible(false);
+  };
 
-    const selectedValue = useMemo(
-        () => { 
-            const players = Array.from(selectedPlayers).join(", ")
-            if (players)
-                return `${players.slice(0,40)} .... `
-            return 'click to select monsters'
-        },
-        [selectedPlayers]
-    );
+  const addNewPlayer = () => {
+    const newPlayers = Array.from<string>(selectedPlayers).map((player, index) => ({
+      name: player,
+      isOnTokyo: false,
+      life: 10,
+      victoryPoints: 0,
+      index,
+    }));
+    handleSetPlayers(newPlayers);
+    // handleSetPlayers(players.concat(newPlayers))
+    closeHandler();
+  };
 
+  const selectedValue = useMemo(
+    () => {
+      const players = Array.from(selectedPlayers).join(', ');
+      if (players) { return `${players.slice(0, 40)} .... `; }
+      return 'click to select monsters';
+    },
+    [selectedPlayers],
+  );
 
-    const disableMonstersToSelect = useMemo( () => {
-        const monsters = Array.from(selectedPlayers)
-        if(monsters.length>=6){
-            return allMonsters.filter(monster=> !monsters.includes(monster))
-        }
-        return []
-        },
-        [selectedPlayers]
-    );
+  const disableMonstersToSelect = useMemo(
+    () => {
+      const monsters = Array.from(selectedPlayers);
+      if (monsters.length >= 6) {
+        return allMonsters.filter((monster) => !monsters.includes(monster));
+      }
+      return [];
+    },
+    [selectedPlayers],
+  );
 
-    const disabledAddButton = useMemo(()=> Array.from(selectedPlayers).length<2 ,[selectedPlayers])
+  const disabledAddButton = useMemo(
+    () => Array.from(selectedPlayers).length < 2,
+    [selectedPlayers],
+  );
 
-    return (
+  return (
         <>
             <Button onPress={handler}>Add Players</Button>
             <Modal
@@ -85,7 +86,7 @@ const MonsterCard = (props: propsSelectMonster) => {
                     </Modal.Header>
                     <Modal.Body>
                         <Dropdown>
-                            <Dropdown.Button flat color="secondary" css={{ tt: "capitalize", overflow: 'hidden' }}>
+                            <Dropdown.Button flat color="secondary" css={{ tt: 'capitalize', overflow: 'hidden' }}>
                                 {selectedValue}
                             </Dropdown.Button>
                             <Dropdown.Menu
@@ -97,10 +98,10 @@ const MonsterCard = (props: propsSelectMonster) => {
                                 disabledKeys={disableMonstersToSelect}
                                 onSelectionChange={setSelectedPlayers}
                             >
-                                {allMonsters.map(monster=>
-                                    <Dropdown.Item key={monster}>{monster}</Dropdown.Item>
-                                )}
-                                
+                                {allMonsters.map((monster) => <Dropdown.Item key={monster}>
+                                        {monster}
+                                    </Dropdown.Item>)}
+
                             </Dropdown.Menu>
                         </Dropdown>
                     </Modal.Body>
@@ -114,7 +115,7 @@ const MonsterCard = (props: propsSelectMonster) => {
                     </Modal.Footer>
                 </Modal>
         </>
-    )
-}
+  );
+};
 
 export default MonsterCard;

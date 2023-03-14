@@ -1,7 +1,7 @@
 {
   "**/*.{js,jsx,ts,tsx}": [
     "eslint --fix", 
-    "jest --bail --findRelatedTests", 
+    "jest --ci --coverage --coverageDirectory=./coverage/unit", 
     "git add"
   ]
 }

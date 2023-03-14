@@ -1,97 +1,93 @@
-import styles from '@/styles/MonsterCard.module.css'
-import { Spacer, Col, Card, Text, Button, Row } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import styles from '@/styles/MonsterCard.module.css';
+import {
+  Spacer, Col, Card, Text, Button, Row,
+} from '@nextui-org/react';
+import { useEffect, useState } from 'react';
 
-type propsMonsterCard = {
-    index: number,
-    name: string,
-    isOnTokyo: boolean,
-    disableEnterOnTokyo: boolean,
-    disableLeaveTokyo: boolean,
-    disableAtack: boolean,
-    life: number,
-    victoryPoints: number,
-    handleOnTokyo: (index: number, status: boolean) => void,
-    handleSetLife: (index: number, life: number) => void,
-    handleAtack: (index: number, isOnTokyo: boolean)=> void,
-    handleSetVictoryPoints: (index: number, victoryPoints: number) => void,
-}
+type PropsMonsterCard = {
+  index: number,
+  name: string,
+  isOnTokyo: boolean,
+  disableEnterOnTokyo: boolean,
+  disableLeaveTokyo: boolean,
+  disableAtack: boolean,
+  life: number,
+  victoryPoints: number,
+  handleOnTokyo: (index: number, status: boolean) => void,
+  handleSetLife: (index: number, life: number) => void,
+  handleAtack: (index: number, isOnTokyo: boolean)=> void,
+  handleSetVictoryPoints: (index: number, victoryPoints: number) => void,
+};
 
-const MonsterCard = (props: propsMonsterCard) => {
-    const { index,
-        name,
-        isOnTokyo,
-        life,
-        victoryPoints,
-        handleOnTokyo,
-        handleSetLife,
-        handleAtack,
-        handleSetVictoryPoints,
-        disableEnterOnTokyo,
-        disableAtack,
-        disableLeaveTokyo
-    } = props
-    const [alive, setAlive] = useState(true)
-    const [winner, setWinner] = useState(false)
+const MonsterCard = (props: PropsMonsterCard) => {
+  const {
+    index,
+    name,
+    isOnTokyo,
+    life,
+    victoryPoints,
+    handleOnTokyo,
+    handleSetLife,
+    handleAtack,
+    handleSetVictoryPoints,
+    disableEnterOnTokyo,
+    disableAtack,
+    disableLeaveTokyo,
+  } = props;
+  const [alive, setAlive] = useState(true);
+  const [winner, setWinner] = useState(false);
 
-    const setLife = (newLife: number) => () => {
-        if (newLife <= 0) {
-            setAlive(false)
-            handleSetLife(index, 0)
-            return
-        }
-        handleSetLife(index, newLife >= 12 ? 12 : newLife)
+  const setLife = (newLife: number) => () => {
+    if (newLife <= 0) {
+      setAlive(false);
+      handleSetLife(index, 0);
+      return;
     }
+    handleSetLife(index, newLife >= 12 ? 12 : newLife);
+  };
 
-    useEffect(()=>{
-        if(life<=0){
-            console.log('death')
-            setAlive(false)
-            return 
-        }
-        
-    },[life])
-
-    const setVictoryPoints = (newVictoryPoints: number) => () => {
-        if (newVictoryPoints < 0) {
-            return
-        } else if (newVictoryPoints > 20) {
-            handleSetVictoryPoints(index, 20)
-            setWinner(true)
-            return
-        }
-        handleSetVictoryPoints(index, newVictoryPoints)
+  useEffect(() => {
+    if (life <= 0) {
+      setAlive(false);
     }
+  }, [life]);
 
-    const isDeadOrWinner = () => {
-        return !alive || winner
+  const setVictoryPoints = (newVictoryPoints: number) => () => {
+    if (newVictoryPoints < 0) {
+      return;
+    } if (newVictoryPoints > 20) {
+      handleSetVictoryPoints(index, 20);
+      setWinner(true);
+      return;
     }
+    handleSetVictoryPoints(index, newVictoryPoints);
+  };
 
-    useEffect(()=>{
-        if(!alive){
-            handleOnTokyo(index, false)
-        }
-    },[alive, handleOnTokyo, index])
+  const isDeadOrWinner = () => !alive || winner;
 
-    let buttonLeaveEnterTokyo: JSX.Element;
-    if (isOnTokyo) {
-        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner() || disableLeaveTokyo } onPress={() => handleOnTokyo(index, false)}>
+  useEffect(() => {
+    if (!alive) {
+      handleOnTokyo(index, false);
+    }
+  }, [alive, handleOnTokyo, index]);
+
+  let buttonLeaveEnterTokyo: JSX.Element;
+  if (isOnTokyo) {
+    buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner() || disableLeaveTokyo } onPress={() => handleOnTokyo(index, false)}>
             Leave Tokyo
-        </Button>
-    } else if(!disableEnterOnTokyo) {
-        buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={() => handleOnTokyo(index, true)}>
+        </Button>;
+  } else if (!disableEnterOnTokyo) {
+    buttonLeaveEnterTokyo = <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={() => handleOnTokyo(index, true)}>
             Enter to Tokyo
-        </Button>
-    } else {
-        buttonLeaveEnterTokyo = <div></div>
-    }
+        </Button>;
+  } else {
+    buttonLeaveEnterTokyo = <div></div>;
+  }
 
-
-
-    return (
+  return (
         <>
             <div className='my-4'>
-                <Card css={{ mw: "420px" }}>
+                <Card css={{ mw: '420px' }}>
                     <Card.Header>
                         <Row justify="space-between">
                             <Text b>Monster: {name}</Text>
@@ -144,7 +140,7 @@ const MonsterCard = (props: propsMonsterCard) => {
                     <Card.Footer>
                         <Row justify="space-between">
                             <>
-                                <Button size="sm" color='warning' disabled={isDeadOrWinner() || disableAtack} onPress={()=>handleAtack(index, isOnTokyo)}>
+                                <Button size="sm" color='warning' disabled={isDeadOrWinner() || disableAtack} onPress={() => handleAtack(index, isOnTokyo)}>
                             Atack
                         </Button>
                                 {buttonLeaveEnterTokyo}
@@ -155,7 +151,7 @@ const MonsterCard = (props: propsMonsterCard) => {
             </div>
             <Spacer y={2} />
         </>
-    )
-}
+  );
+};
 
 export default MonsterCard;

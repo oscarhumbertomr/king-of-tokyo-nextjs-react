@@ -1,162 +1,143 @@
-import styles from '@/styles/MonsterCard.module.css'
-import { Modal, Input, Container, Checkbox, Row, Button, Text, Dropdown } from "@nextui-org/react";
-import { NextPage } from "next"
-import { useEffect, useState, useMemo } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import styles from '@/styles/MonsterCard.module.css';
+import {
+  Container,
+} from '@nextui-org/react';
+import { NextPage } from 'next';
+import { useState, useMemo } from 'react';
 import MonsterCard from '@/components/MonsterCard';
 import SelectMonster from '@/components/SelectMonster';
 
 type PlayerType = {
-    name: string,
-    isOnTokyo: boolean,
-    life: number,
-    victoryPoints: number,
-    index: number
-}
+  name: string,
+  isOnTokyo: boolean,
+  life: number,
+  victoryPoints: number,
+  index: number
+};
 
 const Home: NextPage = () => {
-    const [players, setPlayers] = useState<PlayerType[]>([])
-    const [lastAtackMonsterIndex, setLastAtackMonsterIndex] = useState(-1)
+  const [players, setPlayers] = useState<PlayerType[]>([]);
+  const [lastAtackMonsterIndex, setLastAtackMonsterIndex] = useState(-1);
 
-    const leaveTokyo = (indexPlayer: number, status: boolean) => {
-        if (!status && lastAtackMonsterIndex >= 0) {
-            let newPlayers: PlayerType[] = []
-            if (monsterAlive > 4) {
-                newPlayers = players.map((player, index) =>
-                    indexPlayer === index
-                        ? {
-                            ...player,
-                            isOnTokyo: false,
-                        }
-                        : { ...player }
-                )
-                newPlayers[lastAtackMonsterIndex].isOnTokyo = true
-            } else {
-                newPlayers = players.map((player, index) => {
-                    if (indexPlayer === index) {
-                        return {
-                            ...player,
-                            isOnTokyo: false,
-                        }
-                    } else if (lastAtackMonsterIndex === index && monstersOnTokyo.length === 1) {
-                        return {
-                            ...player,
-                            isOnTokyo: true,
-                        }
-                    }
-                    return player
-                }
-                )
-            }
+  const monsterAlive = useMemo(
+    () => players.filter((player) => player.life > 0).length,
+    [players],
+  );
 
+  const monstersOnTokyo = useMemo(
+    () => players.filter((player) => player.isOnTokyo),
+    [players],
+  );
 
-            setPlayers(newPlayers)
-            setLastAtackMonsterIndex(-1)
+  //   const monstersNotOnTokyo = useMemo(
+  //     () => players.filter((player) => !player.isOnTokyo),
+  //     [players],
+  //   );
+
+  const leaveTokyo = (indexPlayer: number, status: boolean) => {
+    if (!status && lastAtackMonsterIndex >= 0) {
+      let newPlayers: PlayerType[] = [];
+      if (monsterAlive > 4) {
+        newPlayers = players.map((player, index) => (indexPlayer === index
+          ? {
+            ...player,
+            isOnTokyo: false,
+          }
+          : { ...player }));
+        newPlayers[lastAtackMonsterIndex].isOnTokyo = true;
+      } else {
+        newPlayers = players.map((player, index) => {
+          if (indexPlayer === index) {
+            return {
+              ...player,
+              isOnTokyo: false,
+            };
+          } if (lastAtackMonsterIndex === index && monstersOnTokyo.length === 1) {
+            return {
+              ...player,
+              isOnTokyo: true,
+            };
+          }
+          return player;
+        });
+      }
+
+      setPlayers(newPlayers);
+      setLastAtackMonsterIndex(-1);
+    }
+  };
+
+  const enterToTokio = (indexPlayer: number, status: boolean) => {
+    if (status) {
+      let newPlayers: PlayerType[] = [];
+      if (monsterAlive > 4 && monstersOnTokyo.length < 2) {
+        newPlayers = players.map((player, index) => (indexPlayer === index
+          ? {
+            ...player,
+            isOnTokyo: true,
+          }
+          : { ...player }));
+      } else {
+        newPlayers = players.map((player) => ({ ...player, isOnTokyo: false }));
+        newPlayers[indexPlayer].isOnTokyo = status;
+      }
+
+      setPlayers(newPlayers);
+    }
+  };
+
+  const handleOnTokyo = (indexPlayer: number, status: boolean) => {
+    leaveTokyo(indexPlayer, status);
+    enterToTokio(indexPlayer, status);
+  };
+
+  const handleSetLife = (index: number, newLife: number) => {
+    const newPlayers = players.map((player, inx) => (inx === index
+      ? {
+        ...player,
+        life: newLife,
+      }
+      : { ...player }));
+
+    setPlayers(newPlayers);
+  };
+
+  const handleAtack = (index: number, isOnTokyo: boolean) => {
+    const newplayers = players.map((player) => {
+      const newLife = player.life - 1;
+      return player.isOnTokyo !== isOnTokyo
+        ? {
+          ...player,
+          life: newLife < 0 ? 0 : newLife,
         }
-    }
+        : { ...player };
+    });
+    setPlayers(newplayers);
+    setLastAtackMonsterIndex(index);
+  };
 
-    const enterToTokio = (indexPlayer: number, status: boolean) => {
-        if (status) {
-            let newPlayers: PlayerType[] = []
-            if (monsterAlive > 4 && monstersOnTokyo.length < 2) {
-                newPlayers = players.map((player, index) =>
-                    indexPlayer === index
-                        ? {
-                            ...player,
-                            isOnTokyo: true,
-                        }
-                        : { ...player }
-                )
-            } else {
-                newPlayers = players.map(player => {
-                    return { ...player, isOnTokyo: false }
-                })
-                newPlayers[indexPlayer].isOnTokyo = status
-            }
+  const handleSetVictoryPoints = (index: number, newVictoryPoints: number) => {
+    const newPlayers = players.map((player, inx) => (inx === index
+      ? {
+        ...player,
+        victoryPoints: newVictoryPoints,
+      }
+      : { ...player }));
 
+    setPlayers(newPlayers);
+  };
 
-            setPlayers(newPlayers)
-        }
-    }
+  const disableEnterOnTokyo = useMemo(
+    () => (monsterAlive > 4 ? monstersOnTokyo.length > 1 : monstersOnTokyo.length > 0),
+    [monsterAlive, monstersOnTokyo],
+  );
 
+  const handleSetPlayers = (newPlayers: PlayerType[]) => {
+    setPlayers(newPlayers);
+  };
 
-
-    const handleOnTokyo = (indexPlayer: number, status: boolean) => {
-
-        leaveTokyo(indexPlayer, status);
-        enterToTokio(indexPlayer, status);
-
-    }
-
-    const handleSetLife = (index: number, newLife: number) => {
-        console.log(index, newLife)
-        const newPlayers = players.map((player, inx) =>
-            inx === index
-                ? {
-                    ...player,
-                    life: newLife,
-                }
-                : { ...player }
-        )
-
-        setPlayers(newPlayers)
-    }
-
-    const handleAtack = (index: number, isOnTokyo: boolean) => {
-        const newplayers = players.map((player) => {
-            const newLife = player.life - 1
-            return player.isOnTokyo !== isOnTokyo
-                ? {
-                    ...player,
-                    life: newLife < 0 ? 0 : newLife,
-                }
-                : { ...player }
-        }
-        )
-        setPlayers(newplayers)
-        setLastAtackMonsterIndex(index)
-
-    }
-
-    const handleSetVictoryPoints = (index: number, newVictoryPoints: number) => {
-        console.log(index, newVictoryPoints)
-        const newPlayers = players.map((player, inx) =>
-            inx === index
-                ? {
-                    ...player,
-                    victoryPoints: newVictoryPoints,
-                }
-                : { ...player }
-        )
-
-        setPlayers(newPlayers)
-    }
-
-
-
-    const monsterAlive = useMemo(
-        () => players.filter(player => player.life > 0).length,
-        [players]
-    );
-
-    const monstersOnTokyo = useMemo(
-        () => players.filter(player => player.isOnTokyo),
-        [players]
-    );
-
-    const monstersNotOnTokyo = useMemo(
-        () => players.filter(player => !player.isOnTokyo),
-        [players]
-    );
-    const disableEnterOnTokyo = useMemo(
-        () => monsterAlive > 4 ? monstersOnTokyo.length > 1 : monstersOnTokyo.length > 0 ,
-        [monsterAlive, monstersOnTokyo]
-    );
-
-    const handleSetPlayers = (newPlayers: PlayerType[]) => {
-        setPlayers(newPlayers)
-    }
-
-    return (
+  return (
         <Container alignItems='center' >
             <>
                 <h1 className="text-3xl font-bold">
@@ -164,8 +145,7 @@ const Home: NextPage = () => {
                 </h1>
                 <SelectMonster handleSetPlayers={handleSetPlayers} />
                 <div className="flex flex-wrap">
-                    {players && players.map((player, index) =>
-                    <MonsterCard
+                    {players && players.map((player, index) => <MonsterCard
                         key={index}
                         name={player.name}
                         life={player.life}
@@ -174,19 +154,19 @@ const Home: NextPage = () => {
                         isOnTokyo={player.isOnTokyo}
                         handleOnTokyo={handleOnTokyo}
                         disableEnterOnTokyo={disableEnterOnTokyo}
-                        disableAtack={monsterAlive > 4 ?  monstersOnTokyo.length < 2 : monstersOnTokyo.length == 0}
-                        disableLeaveTokyo={lastAtackMonsterIndex<0}
+                        disableAtack={
+                            monsterAlive > 4
+                              ? monstersOnTokyo.length < 2 : monstersOnTokyo.length === 0
+                        }
+                        disableLeaveTokyo={lastAtackMonsterIndex < 0}
                         handleSetVictoryPoints={handleSetVictoryPoints}
                         handleAtack={handleAtack}
-                        handleSetLife={handleSetLife} />
-                )}
+                        handleSetLife={handleSetLife} />)}
                 </div>
-                
-
 
             </>
         </Container>
-    )
-}
+  );
+};
 
 export default Home;
