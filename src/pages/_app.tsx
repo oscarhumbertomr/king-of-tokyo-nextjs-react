@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import '@/styles/MonsterCard.css';
 import { NextUIProvider } from '@nextui-org/react';
 import type { AppProps } from 'next/app';
 

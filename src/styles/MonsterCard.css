@@ -1,0 +1,14 @@
+.text-center{
+    text-align: center;
+}
+
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+
+.flex-container > * {
+    flex-grow: 1;
+}

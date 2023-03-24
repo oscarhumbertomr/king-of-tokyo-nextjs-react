@@ -22,7 +22,7 @@ exports[`renders homepage unchanged 1`] = `
       </span>
     </button>
     <div
-      class="flex flex-wrap"
+      class="flex-container"
     />
   </div>
 </div>

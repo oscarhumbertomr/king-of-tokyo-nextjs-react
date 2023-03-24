@@ -1,4 +1,3 @@
-import styles from '@/styles/MonsterCard.module.css';
 import {
   Spacer, Col, Card, Text, Button, Row,
 } from '@nextui-org/react';
@@ -85,9 +84,7 @@ const MonsterCard = (props: PropsMonsterCard) => {
   }
 
   return (
-        <>
-            <div className='my-4'>
-                <Card css={{ mw: '420px' }}>
+        <Card css={{ mw: '400px' }}>
                     <Card.Header>
                         <Row justify="space-between">
                             <Text b>Monster: {name}</Text>
@@ -107,7 +104,7 @@ const MonsterCard = (props: PropsMonsterCard) => {
                                 </Button>
                             </Col>
                             <Col>
-                                <Text className={styles.text_center}>{victoryPoints}</Text>
+                                <Text className="textCenter">{victoryPoints}</Text>
                             </Col>
                             <Col>
                                 <Button size="sm" color="secondary" disabled={isDeadOrWinner()} onPress={setVictoryPoints(victoryPoints + 1)}>
@@ -126,7 +123,7 @@ const MonsterCard = (props: PropsMonsterCard) => {
                                 </Button>
                             </Col>
                             <Col>
-                                <Text className={styles.text_center}>{life}</Text>
+                                <Text className="textCenter">{life}</Text>
                             </Col>
                             <Col>
                                 <Button size="sm" color="secondary" disabled={isOnTokyo || isDeadOrWinner()} onPress={setLife(life + 1)} >
@@ -148,9 +145,6 @@ const MonsterCard = (props: PropsMonsterCard) => {
                         </Row>
                     </Card.Footer>
                 </Card>
-            </div>
-            <Spacer y={2} />
-        </>
   );
 };
 

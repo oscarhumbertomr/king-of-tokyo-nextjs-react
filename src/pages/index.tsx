@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from '@/styles/MonsterCard.module.css';
 import {
   Container,
 } from '@nextui-org/react';
@@ -144,7 +142,7 @@ const Home: NextPage = () => {
                     King of Tokyo Dashboard
                 </h1>
                 <SelectMonster handleSetPlayers={handleSetPlayers} />
-                <div className="flex flex-wrap">
+                <div className='flex-container'>
                     {players && players.map((player, index) => <MonsterCard
                         key={index}
                         name={player.name}
